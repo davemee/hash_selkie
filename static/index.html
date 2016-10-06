@@ -1,0 +1,95 @@
+<html>
+	<head>
+		<title>#selkie</title>
+	
+		<style>
+div#tweets {
+	display:block;
+	position:fixed;
+	width:100%;
+	height:500px;
+	top:0;
+	overflow:hidden;
+	max-width:1024px;
+	margin:0 0 0 0;
+}
+div.tweet {
+	display:block;
+	max-width:600px;
+	margin-left:auto;
+	margin-right:40px;
+	margin-bottom:10px;
+	padding:10px;
+	border-radius: 8px;
+	border:3px silver solid;
+	clear:both;
+	height:auto;
+}
+div.tweet:before {
+	display:block;
+	position:absolute;
+	right:660px;
+	float:left;
+	clear:none;
+	height:40px;
+	width:40px;
+	background-color:yellow;
+	background:url('/static/slice.png') no-repeat top left;
+	background-size:80px 80px;
+	content: ' ';
+}
+div.tweet>span {
+	display:inline-block;
+	clear:none;
+}
+div.tweet>span.u {
+	width:100px;
+	height:0;
+	float:left;	
+}
+div.tweet>span.t {
+	margin-left:100px;
+	background-color:white;
+	clear:none;
+	position:relative;
+	top:0;
+	height:auto;
+}
+		</style>
+		<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>	
+		<script>
+var tweets={};
+var updateInterval;
+updateTweets=function(){
+	$.getJSON( "/tweets" ).done(function( data ) {
+		console.log(data);
+		var c = 0;
+		$.each( data, function( i, item ) {
+			if( $("div.tweets").find("[t='"+i+"']").length>0 ) {
+				// it exists - skip it
+			} else {
+				var p = item.split("@@@@@");
+				var x = $('<div class="tweet"><span class="u">'+p[0]+'</span><span class="t">'+p[1]+'</span></div>');
+				x.data("t",i);
+				x.data("a",100);
+				x.hide();
+				x.prependTo('#tweets');
+				x.delay(c*3000).slideDown(1000).delay(10*1000).fadeOut(10*1000);
+	      	}
+	      	c = c + 1;
+		});
+    });
+};
+
+$( document ).ready(function() {
+	updateInterval=setInterval(	updateTweets, 60 * 1000 );
+	updateTweets();
+});
+		</script>
+	</head>
+	<body>
+
+		<div id="tweets"></div>
+	
+	</body>
+</html>
